@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rate Limiter Dashboard</title>
+    <style>
+        body { font-family: sans-serif; margin: 40px; background: #f5f5f5; }
+        h1 { color: #333; }
+        table { border-collapse: collapse; width: 100%; background: white; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background: #333; color: white; }
+        tr:nth-child(even) { background: #f9f9f9; }
+        .allow { color: green; font-weight: bold; }
+        .deny { color: red; font-weight: bold; }
+        #lastUpdated { color: #666; font-size: 0.9em; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+<h1>Rate Limiter Dashboard</h1>
+<div id="lastUpdated">Loading...</div>
+<table>
+    <thead>
+    <tr>
+        <th>Client ID</th>
+        <th>Algorithm</th>
+        <th>Current Tokens</th>
+        <th>Total Allowed</th>
+        <th>Total Denied</th>
+    </tr>
+    </thead>
+    <tbody id="statsBody">
+    </tbody>
+</table>
+
+<script>
+    async function fetchStats() {
+        try {
+            const response = await fetch('/admin/clients/stats');
+            const clients = await response.json();
+
+            const tbody = document.getElementById('statsBody');
+            tbody.innerHTML = '';
+
+            clients.forEach(client => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${client.clientId}</td>
+                    <td>${client.algorithm}</td>
+                    <td>${client.tokens.toFixed(2)}</td>
+                    <td class="allow">${client.totalAllowed}</td>
+                    <td class="deny">${client.totalDenied}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            document.getElementById('lastUpdated').textContent =
+                'Last updated: ' + new Date().toLocaleTimeString();
+        } catch (error) {
+            document.getElementById('lastUpdated').textContent = 'Error loading stats';
+        }
+    }
+
+    fetchStats(); // load immediately
+    setInterval(fetchStats, 2000); // then refresh every 2 seconds
+</script>
+</body>
+</html>

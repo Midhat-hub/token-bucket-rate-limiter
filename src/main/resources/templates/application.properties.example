@@ -1,0 +1,8 @@
+spring.application.name=Project01
+spring.datasource.url=jdbc:postgresql://localhost:5432/project01
+spring.datasource.username=postgres
+spring.datasource.password=your_password_here
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.datasource.hikari.maximum-pool-size=50
+server.tomcat.threads.max=400
